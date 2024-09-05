@@ -61,7 +61,7 @@ function animate(time) {
     requestAnimationFrame(animate)
 }
 
-const renderer = new THREE.WebGLRenderer({ antialias: true })
+const renderer = new THREE.WebGLRenderer()
 function setBounds() {
     width = window.innerWidth * window.devicePixelRatio
     height = window.innerHeight * window.devicePixelRatio
@@ -71,7 +71,7 @@ renderer.setPixelRatio(window.devicePixelRatio)
 setBounds()
 window.addEventListener('resize', setBounds)
 window.addEventListener('mousemove', (e) => {
-    segments = clerp(10, window.innerWidth/6, e.x / window.innerWidth)
+    segments = clerp(10, window.innerWidth/4, e.x / window.innerWidth)
     high = clerp(0.9, 0.02, e.y / window.innerHeight)
     low = clerp(-0.02, -0.9, e.y / window.innerHeight)
 })
