@@ -1,36 +1,28 @@
+#define TAU 6.28318530718
+
 uniform float time;
 uniform vec2 viewportSize;
 uniform float high;
 uniform float low;
 uniform float segments;
 
-float halley(float b, float c, float d, float x) {
+float newton(float b, float c, float d, float x) {
     float f = x*x*x + b*x*x + c*x + d;
     float df = 3.0*x*x + 2.0*b*x + c;
-    float ddf = 6.0*x + 2.0*b;
 
-    return x - (2.0*f*df)/(2.0*df*df - f*ddf);
+    return x - f/df;
 }
 
-float halleyIrrational(float b, float c, float d, float x) {
-    // For some reason, x needs to be negative for the discriminant to be positive.
-    float s = x < 0.0 ? 1.0 : -1.0;
-    b *= s;
-    d *= s;
-    x *= s;
+float root(float b, float c, float d) {
+    // t^3 + b*t^2 + c*t + d = 0.
+    // Always three real roots. Take the middle one.
+    float p = c - b*b/3.0;
+    float q = b*(2.0*b*b - 9.0*c)/27.0 + d;
     
-    float f = x*x*x + b*x*x + c*x + d;
-    float df = 3.0*x*x + 2.0*b*x + c;
-    float ddf = 6.0*x + 2.0*b;
+    float t = 2.0*sqrt(-p/3.0);
+    float phi = (acos(3.0*q/(p*t)) - TAU)/3.0;
 
-    float disc = df*df - 2.0*f*ddf;
-
-    if (disc < 0.0 || ddf < 0.001) {
-        // Use rational Halley
-        return (x - (2.0*f*df)/(2.0*df*df - f*ddf))*s;
-    } else {
-        return (x - (df + sqrt(disc))/ddf)*s;
-    }
+    return newton(b, c, d, t*cos(phi) - b/3.0);
 }
 
 float gradient(float t, float x, float y, float a, float b) {
@@ -78,19 +70,7 @@ void main() {
     float c = 2.0*(top + y)*(bottom + y) - x*x - 3.0*y*y;
     float d = -2.0*top*bottom*y;
 
-    // The root is always between the local minimum and maximum.
-    float inflection = -b/(3.0);
-
-    // When y and either a or b is small, the root is close to a local extremum.
-    // Halley's irrational method gets the root quickly.
-    float v1 = halleyIrrational(b, c, d, inflection);
-    float v2 = halleyIrrational(b, c, d, v1);
-    float v3 = halleyIrrational(b, c, d, v2);
-    float v4 = halleyIrrational(b, c, d, v3);
-
-    // Using irrational halley introduces some small inconsistencies
-    // (because we sometimes change the function) so we do one step of rational Halley.
-    float t = halley(b, c, d, v4);
+    float t = root(b, c, d);
 
     // Anti-aliasing
     float grad = gradient(t, x, y, top, bottom);
