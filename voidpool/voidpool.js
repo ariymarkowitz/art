@@ -16,8 +16,8 @@ function clerp(a, b, t) {
     return Math.min(max, Math.max(min, lerp))
 }
 
-const vertexShader = await fetch('voidpool/shader.vert').then(res => res.text())
-const fragmentShader = await fetch('voidpool/shader.frag').then(res => res.text())
+const vertexShader = await fetch('shader.vert').then(res => res.text())
+const fragmentShader = await fetch('shader.frag').then(res => res.text())
 
 const scene = new THREE.Scene()
 
