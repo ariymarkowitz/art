@@ -60,8 +60,8 @@ vec3 color(float t, float top, float bottom) {
 }
 
 void main() {
-    float x = gl_PointCoord.x * viewportSize.x;
-    float y = -gl_PointCoord.y * viewportSize.y;
+    float x = gl_FragCoord.x*2.0 - viewportSize.x;
+    float y = -gl_FragCoord.y*2.0 + viewportSize.y;
     float bottom = low*viewportSize.y;
     float top = high*viewportSize.y;
 
