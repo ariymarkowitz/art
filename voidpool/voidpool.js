@@ -70,12 +70,15 @@ function setBounds() {
 renderer.setPixelRatio(window.devicePixelRatio)
 setBounds()
 window.addEventListener('resize', setBounds)
-window.addEventListener('pointermove', (e) => {
+
+function onMove(e) {
     if (!e.isPrimary) return
     segments = clerp(10, window.innerWidth/4, e.x / window.innerWidth)
     high = clerp(0.9, 0.02, e.y / window.innerHeight)
     low = clerp(-0.02, -0.9, e.y / window.innerHeight)
-})
+}
+window.addEventListener('pointermove', onMove)
+window.addEventListener('pointerdown', onMove)
 
 document.body.appendChild(renderer.domElement)
 
