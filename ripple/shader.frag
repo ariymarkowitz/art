@@ -8,7 +8,7 @@ uniform float segments;
 
 float root(float b, float c, float d, float n) {
     // t^3 + b*t^2 + c*t + d = 0.
-    // Always three real roots. Take the middle one.
+    // Always three real roots. Take the n-th one.
     float p = c - b*b/3.0;
     float q = b*(2.0*b*b - 9.0*c)/27.0 + d;
     
@@ -16,16 +16,6 @@ float root(float b, float c, float d, float n) {
     float phi = (acos(3.0*q/(p*t)) - n*TAU)/3.0;
 
     return t*cos(phi) - b/3.0;
-}
-
-float gradient(float t, float x, float y, float a, float b) {
-    // dt/dx = (2 t x)/(2 a b-4 a t-4 b t+3 t^2-x^2+2 a y+2 b y-y^2)
-    float dt_dx = 2.0*t*x / (2.0*a*b - 4.0*a*t - 4.0*b*t + 3.0*t*t - x*x + 2.0*a*y + 2.0*b*y - y*y);
-
-    // dt/dy = (2 (a b-a t-b t+t y))/(2 a b-4 a t-4 b t+3 t^2-x^2+2 a y+2 b y-y^2)
-    float dt_dy = 2.0*(a*b - a*t - b*t + t*y) / (2.0*a*b - 4.0*a*t - 4.0*b*t + 3.0*t*t - x*x + 2.0*a*y + 2.0*b*y - y*y);
-
-    return sqrt(dt_dx*dt_dx + dt_dy*dt_dy);
 }
 
 float stripe(float t) {
@@ -64,9 +54,6 @@ void main() {
     float d = -2.0*top*bottom*y;
 
     float t = root(b, c, d, time/16.0);
-
-    // Anti-aliasing
-    float grad = gradient(t, x, y, top, bottom);
     vec3 col = color(t, top, bottom);
 
     gl_FragColor = vec4(col, 1.0);
